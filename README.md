@@ -1,5 +1,8 @@
 # Firstleaf Take Home Project
 
+## Only one restriction
+You only have 4 hours to complete the challenge, period.
+
 ## Assignment
 Today, we're going to design an application that will function as a user service.
 This service supports new user creation and returning users that are currently
