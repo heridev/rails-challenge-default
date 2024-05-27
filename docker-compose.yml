@@ -1,0 +1,48 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - 'postgres:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+  web:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "3005:3005"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+      - redis
+    environment:
+      - REDIS_URL_SIDEKIQ=redis://redis:6379/1
+
+  redis:
+    image: 'redis:5-alpine'
+    command: redis-server
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis:/data'
+
+  sidekiq:
+    depends_on:
+      - db
+      - redis
+    build: .
+    command: bundle exec sidekiq
+    stdin_open: true
+    tty: true
+    volumes:
+      - '.:/web'
+    environment:
+      - REDIS_URL_SIDEKIQ=redis://redis:6379/1
+
+volumes:
+  redis:
+  postgres:
